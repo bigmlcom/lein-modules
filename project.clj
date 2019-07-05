@@ -1,4 +1,4 @@
-(defproject bigml/lein-modules "0.3.12"
+(defproject bigml/lein-modules "0.4.0"
   :description "Little extension to lein-modules to propagate project versions"
   :url "https://github.com/bigmlcom/lein-modules"
   :license {:name "Eclipse Public License"
