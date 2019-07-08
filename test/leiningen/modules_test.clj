@@ -1,7 +1,7 @@
 (ns leiningen.modules-test
   (:use clojure.test
         leiningen.modules
-        [lein-modules.common :only (parent)]
+        lein-modules.dependencies
         [lein-modules.inheritance :only (inherit)])
   (:require [leiningen.core.project :as prj]
             [leiningen.clean :refer [delete-file-recursively]]

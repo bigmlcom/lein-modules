@@ -1,5 +1,6 @@
 (ns lein-modules.inheritance
-  (:use [lein-modules.common :only (config parent)]
+  (:use [lein-modules.common :only (config)]
+        [lein-modules.dependencies :only (parent)]
         [lein-modules.compression :only (compressed-profiles)])
   (:require [leiningen.core.project :as prj]))
 

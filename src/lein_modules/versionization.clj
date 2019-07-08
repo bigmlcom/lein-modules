@@ -1,12 +1,24 @@
 (ns lein-modules.versionization
   (:use [lein-modules.common :only (config)]
-        [leiningen.core.project :only (artifact-map)]))
+        [leiningen.core.project :only (artifact-map)]
+        [lein-modules.dependencies :as dependencies]))
+
+(defn- top-parent [project]
+  (if-let [p (dependencies/parent project)] (top-parent p) project))
+
+(defn- ensure-versions [project]
+  (when project
+    (dependencies/ensure-project-versions (top-parent project)))
+  project)
 
 (defn versions
   "Merge dependency management maps of :versions from the
   modules config"
   [project]
-  (->> (config project) (map :versions) (apply merge {})))
+  (ensure-versions project)
+  (->> (config project)
+       (map :versions)
+       (apply merge (dependencies/project-versions))))
 
 (defn recursive-get
   "There's probably a better way to do this"
@@ -33,16 +45,11 @@
         ver)
       opts)))
 
-(def project-versions (atom {}))
-(defn set-project-versions! [vs] (swap! project-versions merge vs))
-
 (defn versionize
   "Substitute versions in dependency vectors with actual versions from
   the :versions modules config"
   [project]
-  (let [vmap (merge (select-keys project [:version])
-                    @project-versions
-                    (versions project))
+  (let [vmap (merge (select-keys project [:version]) (versions project))
         f #(with-meta (for [d %] (expand-version d vmap)) (meta %))]
     (-> project
         (update-in [:dependencies] f)
